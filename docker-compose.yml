@@ -1,0 +1,66 @@
+version: '3.2'
+services:
+    web1:
+      # build:
+           # context: ./Dockerfileweb
+           # dockerfile: ./Dockerfileweb/Dockerfile
+       #deploy:
+         #replicas: 4  
+       image: php-zendserver
+       volumes:
+            - "./php/:/var/www/html"
+       ports:
+            - "9811:80"
+    #web2:
+     #  build:
+      #      context: ./Dockerfileweb
+       #     dockerfile: ./Dockerfileweb/Dockerfile
+       #deploy:
+         #replicas: 4
+      # image: 127.0.0.1:5000/myweb
+      # volumes:
+       #     - "./php/:/var/www/html"
+      # ports:
+       #     - "9816:80"
+    loadblancer:
+     #  build: 
+      #      context: ./Dockerfile
+       #     dockerfile: ./Dockerfile/Dockerfile 
+       image: nginx 
+       ports:
+            - "9812:80"   
+    db:
+      # build: 
+       #     context: ./Dockerfiledb
+        #    dockerfile: ./Dockerfilefdb/Dockerfile 
+       image: mariadb
+       ports:
+            - "9813:3306"
+       volumes:
+          - ./database/:/var/lib/mysql
+       environment:
+          MYSQL_ROOT_PASSWORD: netlab
+          MYSQL_USER: root
+          MYSQL_PASSWORD: netlab
+          MYSQL_DATABASE: restaurant
+    phpmyadmin:   
+      # build: 
+           # context: ./Dockerfilephpmyadmin
+            #dockerfile: ./Dockerfilephpmyadmin/Dockerfile
+       image: phpmyadmin/phpmyadmin
+       ports:
+            - "9814:80"
+       links:
+            - db
+       environment:
+            MYSQL_USERNAME: root
+            MYSQL_ROOT_PASSWORD: netlab
+    
+networks:
+    frontend:
+        driver: bridge
+        ipam:
+            driver: default
+            #config:
+                #- subnet: 172.16.238.0/24
+                  #gateway: 172.16.238.1
